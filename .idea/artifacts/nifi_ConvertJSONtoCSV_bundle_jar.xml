@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="nifi-ConvertJSONtoCSV-bundle:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/nifi_ConvertJSONtoCSV_bundle_jar</output-path>
+    <root id="archive" name="nifi-ConvertJSONtoCSV-bundle.jar">
+      <element id="module-output" name="nifi-ConvertJSONtoCSV-processors" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/nifi/nifi-processor-utils/0.4.1/nifi-processor-utils-0.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/commons-io/commons-io/2.4/commons-io-2.4.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20151123/json-20151123.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/nifi/nifi-security-utils/0.4.1/nifi-security-utils-0.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/apache/nifi/nifi-utils/0.4.1/nifi-utils-0.4.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
