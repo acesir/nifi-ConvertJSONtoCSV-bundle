@@ -26,7 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 
-public class ConvertJSONtoCSVTest {
+public class TestConvertJSONtoCSV {
 
     @Test
     public void testSimpleJSON() throws IOException {

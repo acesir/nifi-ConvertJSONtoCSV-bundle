@@ -30,6 +30,7 @@ import org.apache.nifi.processor.*;
 import org.apache.nifi.processor.exception.ProcessException;
 import org.apache.nifi.processor.io.InputStreamCallback;
 import org.apache.nifi.processor.io.OutputStreamCallback;
+import org.apache.nifi.processor.io.StreamCallback;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -140,7 +141,6 @@ public class ConvertJSONtoCSV extends AbstractProcessor {
 
     @Override
     public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
-        final AtomicReference<String> jsonHolder = new AtomicReference<>();
         final String includeHeaders = context.getProperty(INCLUDE_HEADERS).getValue();
 
         FlowFile flowFile = session.get();
@@ -149,36 +149,28 @@ public class ConvertJSONtoCSV extends AbstractProcessor {
         }
 
         try {
-            session.read(flowFile, (new InputStreamCallback() {
-                @Override
-                public void process(InputStream inputStream) throws IOException {
-                    List<Map<String, String>> flatJson =
-                            JSONParser.parseJSON(IOUtils.toString(inputStream, "UTF-8"), getRemoveKeySet());
-                    try {
-                        if (flatJson == null) {
-                            throw new IOException("Unable to parse JSON file. Please check the file contains valid JSON structure");
-                        }
-                        jsonHolder.set(CSVGenerator.generateCSV(flatJson, delimiter, emptyFields, includeHeaders).toString());
-                    } catch (JSONException ex) {
-                        throw new JSONException("Unable to parse as JSON appears to be malformed: " + ex);
+            flowFile = session.write(flowFile, new StreamCallback() {
+            @Override
+            public void process(final InputStream inputStream, final OutputStream outputStream) throws IOException {
+                List<Map<String, String>> flatJson;
+                try {
+                    flatJson = JSONParser.parseJSON(IOUtils.toString(inputStream, "UTF-8"), getRemoveKeySet());
+                    if (flatJson == null) {
+                        throw new IOException("Unable to parse JSON file. Please check the file contains valid JSON structure");
                     }
+                } catch (JSONException ex) {
+                    throw new JSONException("Unable to parse as JSON appears to be malformed: " + ex);
                 }
-            }));
+                outputStream.write(CSVGenerator.generateCSV(flatJson, delimiter, emptyFields, includeHeaders).toString().getBytes());
+            }
+        });
 
-            flowFile = session.write(flowFile, new OutputStreamCallback() {
-                @Override
-                public void process(OutputStream outputStream) throws IOException {
-                    outputStream.write(jsonHolder.get().getBytes());
-                }
-            });
-
-            session.transfer(flowFile, RELATIONSHIP_SUCCESS);
+        session.transfer(flowFile, RELATIONSHIP_SUCCESS);
         }
         catch (ProcessException | JSONException ex) {
             getLogger().error("Error converting FlowFile to CSV due to {}", new Object[] {ex.getMessage()}, ex);
             session.transfer(flowFile, RELATIONSHIP_FAILURE);
         }
-
     }
 
     private Set<String> getRemoveKeySet() {
