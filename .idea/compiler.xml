@@ -34,7 +34,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="nifi-ConvertJSONtoCSV-bundle" target="1.7" />
-      <module name="nifi-ConvertJSONtoCSV-nar" target="1.7" />
+      <module name="nifi-ConvertJSONtoCSV-nar" target="1.5" />
       <module name="nifi-ConvertJSONtoCSV-processors" target="1.7" />
     </bytecodeTargetLevel>
   </component>
